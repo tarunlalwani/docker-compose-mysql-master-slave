@@ -1,0 +1,27 @@
+version: '2'
+services:
+  mysqlmaster:
+    image: mysql:5.7.15
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root"
+    volumes:
+      - ./data/mysql-master:/var/lib/mysql/
+      - ./config/mysql-master:/etc/mysql/conf.d/
+  mysqlslave:
+    image: mysql:5.7
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root"
+    volumes:
+      - ./data/mysql-slave:/var/lib/mysql/
+      - ./config/mysql-slave:/etc/mysql/conf.d/
+  mysqlconfigure:
+    image: mysql:5.7.15
+    environment:
+      - "MYSQL_SLAVE_PASSWORD=root"
+      - "MYSQL_MASTER_PASSWORD=root"
+      - "MYSQL_ROOT_PASSWORD=root"
+      - "MYSQL_REPLICATION_USER=repl"
+      - "MYSQL_REPLICATION_PASSWORD=repl"
+    volumes:
+      - ./mysql_connector.sh:/tmp/mysql_connector.sh
+    command: /bin/bash -x /tmp/mysql_connector.sh
